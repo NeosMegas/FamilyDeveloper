@@ -1,0 +1,43 @@
+﻿<Window x:Class="FamilyDeveloper.Views.ParametersWindow"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FamilyDeveloper.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="500" d:DesignWidth="500"
+            Title="InputBoxMultiline"
+            Height="500"
+            Width="500"
+            WindowStartupLocation="CenterScreen"
+            FocusManager.FocusedElement="{Binding ElementName=txt}"
+            >
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="MaxHeight" Value="50"/>
+        </Style>
+        <Style TargetType="ComboBox">
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="90*"/>
+            <RowDefinition Height="10*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <TextBox x:Name="txt" Margin="5,5,5,0" Grid.ColumnSpan="3" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" FontFamily="Cascadia Mono" Text="{Binding Path=ParametersString}" />
+        <Button x:Name="cmbOk" Grid.Row="1" IsDefault="True" Click="cmbOk_Click">OK</Button>
+        <Button x:Name="cmbCancel" Grid.Row="1" Grid.Column="1" IsCancel="True">Отмена</Button>
+        <CheckBox Grid.Row="1" Grid.Column="2" Margin="5" VerticalAlignment="Center" VerticalContentAlignment="Center" IsChecked="{Binding Path=ForAllOpenedFamilies}">
+            <TextBlock TextWrapping="Wrap" VerticalAlignment="Center">
+                Для всех открытых семейств
+            </TextBlock>
+        </CheckBox>
+    </Grid>
+</Window>

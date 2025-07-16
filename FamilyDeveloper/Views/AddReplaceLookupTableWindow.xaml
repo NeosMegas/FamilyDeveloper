@@ -1,0 +1,69 @@
+﻿<Window x:Class="FamilyDeveloper.Views.AddReplaceLookupTableWindow"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FamilyDeveloper.Views"
+            xmlns:converters="clr-namespace:FamilyDeveloper.Views.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="500"
+            Width="500"
+            Height="300"
+            WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <converters:BuiltInParameterGroupToTitleConverter x:Key="builtInParameterGroupToTitleConverter" />
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="MaxHeight" Value="50"/>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="85*"/>
+            <RowDefinition Height="15*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+        <TextBox x:Name="txt" Margin="5,5,5,0" Grid.ColumnSpan="3" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" FontFamily="Cascadia Mono" Text="{Binding Path=FilePathsString}" />
+        <Button x:Name="cmbOk" Grid.Row="1" IsDefault="True" Click="cmbOk_Click">OK</Button>
+        <Button x:Name="cmbBrowse" Grid.Row="1" Grid.Column="1" Command="{Binding GetFileNamesCommand}">Обзор...</Button>
+        <Button x:Name="cmbCancel" Grid.Row="1" Grid.Column="2" IsCancel="True">Отмена</Button>
+        <StackPanel Grid.Column="3" Grid.RowSpan="2">
+            <CheckBox Margin="5" VerticalAlignment="Center" VerticalContentAlignment="Center" IsChecked="{Binding ForAllOpenedFamilies}">
+                <TextBlock TextWrapping="Wrap" VerticalAlignment="Center">
+                    Для всех открытых семейств
+                </TextBlock>
+            </CheckBox>
+            <CheckBox x:Name="cbCreateParameter" Margin="5,0,5,5" VerticalAlignment="Center" VerticalContentAlignment="Center" IsChecked="{Binding CreateLtParameter}">
+                <TextBlock TextWrapping="Wrap" VerticalAlignment="Center">
+                    Создать параметр с именем таблицы поиска
+                </TextBlock>
+            </CheckBox>
+            <Label Content="Имя параметра"/>
+            <TextBox Margin="5,0,5,5" Text="{Binding LtParameterName}" IsEnabled="{Binding ElementName=cbCreateParameter, Path=IsChecked}" />
+            <Label Content="Группа параметров" />
+            <ComboBox ItemsSource="{Binding ParameterGroups}" SelectedItem="{Binding SelectedParameterGroup}" Margin="5,0,5,5">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Converter={StaticResource builtInParameterGroupToTitleConverter}}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <CheckBox x:Name="cbReplaceIfExist" Margin="5,0,5,5" VerticalAlignment="Center" VerticalContentAlignment="Center" IsChecked="{Binding ReplaceIfExist}">
+                <TextBlock TextWrapping="Wrap" VerticalAlignment="Center">
+                    Заменить таблицу, если такая уже существует
+                </TextBlock>
+            </CheckBox>
+            <CheckBox x:Name="cbCreateIfNotExist" Margin="5,0,5,5" VerticalAlignment="Center" VerticalContentAlignment="Center" IsChecked="{Binding CreateIfNotExist}">
+                <TextBlock TextWrapping="Wrap" VerticalAlignment="Center">
+                    Создать таблицу, если такой не существует
+                </TextBlock>
+            </CheckBox>
+
+        </StackPanel>
+    </Grid>
+</Window>

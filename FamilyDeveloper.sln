@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35825.156
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FamilyDeveloper", "FamilyDeveloper\FamilyDeveloper.csproj", "{8A40F17A-CF60-4132-8B35-205866EE75B0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		R19_Debug|Any CPU = R19_Debug|Any CPU
+		R19_Release|Any CPU = R19_Release|Any CPU
+		R21_Debug|Any CPU = R21_Debug|Any CPU
+		R21_Release|Any CPU = R21_Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8A40F17A-CF60-4132-8B35-205866EE75B0}.R19_Debug|Any CPU.ActiveCfg = R19_Debug|Any CPU
+		{8A40F17A-CF60-4132-8B35-205866EE75B0}.R19_Debug|Any CPU.Build.0 = R19_Debug|Any CPU
+		{8A40F17A-CF60-4132-8B35-205866EE75B0}.R19_Release|Any CPU.ActiveCfg = R19_Release|Any CPU
+		{8A40F17A-CF60-4132-8B35-205866EE75B0}.R19_Release|Any CPU.Build.0 = R19_Release|Any CPU
+		{8A40F17A-CF60-4132-8B35-205866EE75B0}.R21_Debug|Any CPU.ActiveCfg = R21_Debug|Any CPU
+		{8A40F17A-CF60-4132-8B35-205866EE75B0}.R21_Debug|Any CPU.Build.0 = R21_Debug|Any CPU
+		{8A40F17A-CF60-4132-8B35-205866EE75B0}.R21_Release|Any CPU.ActiveCfg = R21_Release|Any CPU
+		{8A40F17A-CF60-4132-8B35-205866EE75B0}.R21_Release|Any CPU.Build.0 = R21_Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0CEE941D-A9B2-45F7-9E0B-AD35AA86E9EE}
+	EndGlobalSection
+EndGlobal
