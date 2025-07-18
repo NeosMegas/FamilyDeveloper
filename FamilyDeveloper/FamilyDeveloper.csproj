@@ -30,7 +30,7 @@
 		<CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
 		<RootNamespace>FamilyDeveloper</RootNamespace>
 		<AssemblyName>FamilyDeveloper</AssemblyName>
-		<Version>$(VersionPrefix)0.1.0.0</Version>
+		<Version>$(VersionPrefix)0.1.0.1</Version>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -86,6 +86,15 @@
 		</Reference>
 		<Reference Include="RevitAPI" Condition="$(Configuration.Contains('R21'))">
 			<HintPath>$(ProgramW6432)\Autodesk\Revit 2021\RevitAPIUI.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Reference Include="RevitAPI" Condition="$(Configuration.Contains('R22'))">
+			<HintPath>$(ProgramW6432)\Autodesk\Revit 2022\RevitAPI.dll</HintPath>
+		</Reference>
+		<Reference Include="RevitAPI" Condition="$(Configuration.Contains('R22'))">
+			<HintPath>$(ProgramW6432)\Autodesk\Revit 2022\RevitAPIUI.dll</HintPath>
 		</Reference>
 	</ItemGroup>
 
@@ -148,6 +157,30 @@
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<StartAction>Program</StartAction>
 		<StartProgram>C:\Program Files\Autodesk\Revit 2021\Revit.exe</StartProgram>
+		<StartArguments>journal.0001easyexample.txt</StartArguments>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'R22_Debug|AnyCPU'">
+		<DebugSymbols>true</DebugSymbols>
+		<Optimize>false</Optimize>
+		<TargetFramework>net48</TargetFramework>
+		<OutputPath>bin\R22_Debug\</OutputPath>
+		<DefineConstants>DEBUG;R22</DefineConstants>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<StartAction>Program</StartAction>
+		<StartProgram>C:\Program Files\Autodesk\Revit 2022\Revit.exe</StartProgram>
+		<StartArguments>journal.0001easyexample.txt</StartArguments>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'R22_Release|AnyCPU'">
+		<DebugSymbols>false</DebugSymbols>
+		<Optimize>true</Optimize>
+		<TargetFramework>net48</TargetFramework>
+		<OutputPath>bin\R22_Release\</OutputPath>
+		<DefineConstants>R22</DefineConstants>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<StartAction>Program</StartAction>
+		<StartProgram>C:\Program Files\Autodesk\Revit 2022\Revit.exe</StartProgram>
 		<StartArguments>journal.0001easyexample.txt</StartArguments>
 	</PropertyGroup>
 

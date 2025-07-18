@@ -155,7 +155,7 @@ namespace FamilyDeveloper.ViewModels
             foreach (Document doc in uiApp.Application.Documents)
                 if (doc.IsFamilyDocument)
                     nearestFamilyDocument = doc;
-            parameterGroups = new ObservableCollection<BuiltInParameterGroup>(ParameterUtils.GetAllBuiltInGroups(uiApp.ActiveUIDocument.Document));
+            parameterGroups = new ObservableCollection<BuiltInParameterGroup>(FamilyDeveloper.Helpers.ParameterUtils.GetAllBuiltInGroups(uiApp.ActiveUIDocument.Document));
         }
 
         public void AddLookupTable()

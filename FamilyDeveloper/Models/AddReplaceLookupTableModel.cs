@@ -1,6 +1,7 @@
 ﻿using Autodesk.Revit.ApplicationServices;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
+using FamilyDeveloper.Helpers;
 using SimplePluginLogger;
 using System;
 using System.Collections.Generic;
@@ -174,6 +175,11 @@ namespace FamilyDeveloper.Models
             if (!doc.IsFamilyDocument)
             {
                 logger.Log($"AddLookupTable: Документ \"{doc.Title}\" не является семейством.");
+                return false;
+            }
+            if (!FamiyTypesUtils.IsThereAtLeastOneFamilyType(doc, logger))
+            {
+                logger.Log($"AddLookupTable: Документ \"{doc.Title}\" не содержит ни одного типа.");
                 return false;
             }
             if (string.IsNullOrEmpty(ltFilePath) || !File.Exists(ltFilePath))
