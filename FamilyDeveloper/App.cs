@@ -1,17 +1,9 @@
 ﻿#region Namespaces
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Reflection;
-using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using Autodesk.Revit.ApplicationServices;
-using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using FamilyDeveloper.Commands;
-using FamilyDeveloper.Helpers;
-using FamilyDeveloper.ViewModels;
 using SimplePluginLogger;
 #endregion
 

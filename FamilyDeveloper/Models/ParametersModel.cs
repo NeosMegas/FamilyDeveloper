@@ -41,13 +41,21 @@ namespace FamilyDeveloper.Models
             int parametersProcessed = 0;
             int rowNumber = 0;
             string[] lines = parametersString.Replace("\r\n", "\n").Split(['\n'], StringSplitOptions.RemoveEmptyEntries);
-            string s = "";
             Dictionary<string, bool> parameterSetFormulas = [];
             Dictionary<string, string> parameterFormulas = [];
             Dictionary<string, string> parameterNewNames = [];
+
+#if R19 || R20 || R21 || R22
             Dictionary<string, ParameterType> parameterTypes = [];
+#elif R23 || R24 || R25 || R26
+            Dictionary<string, ForgeTypeId> parameterTypes = [];
+#endif
             Dictionary<string, bool> parameterIsInstance = [];
+#if R19 || R20 || R21 || R22
             Dictionary<string, BuiltInParameterGroup> parameterGroups = [];
+#elif R23 || R24 || R25 || R26
+            Dictionary<string, ForgeTypeId> parameterGroups = [];
+#endif
             Dictionary<string, BuiltInCategory> parameterCategories = [];
             Dictionary<string, bool> parameterSetValues = [];
             Dictionary<string, string> parameterValues = [];
@@ -61,13 +69,18 @@ namespace FamilyDeveloper.Models
                 string[] strSplit = str.Split(["=="], StringSplitOptions.None);
                 string name = "";
                 string newName = "";
+#if R19 || R20 || R21 || R22
                 BuiltInParameterGroup group = BuiltInParameterGroup.INVALID;
                 ParameterType type = ParameterType.Invalid;
+#elif R23 || R24 || R25 || R26
+                ForgeTypeId group = null;
+                ForgeTypeId type = null;
+#endif
                 BuiltInCategory category = BuiltInCategory.INVALID;
                 bool isInstance = false;
                 string isInstanceString = "";
-                bool setFormula = false;
-                string formula = "";
+                bool setFormula = str.Contains("==");
+                string formula = null;
                 bool setValue = false;
                 string valueString = "";
                 string[] firstPart = strSplit[0].Trim().Split([';'], StringSplitOptions.RemoveEmptyEntries);
@@ -106,7 +119,7 @@ namespace FamilyDeveloper.Models
                         spfFileName = filename[1].Substring(0, filename[1].Length - 1);
                         if (!File.Exists(spfFileName))
                         {
-                            logger.Log($"AddParametersWithFormulas: (строка {rowNumber}): Файл \"" + spfFileName + "\" не найден.");
+                            logger.Log($"AddParametersWithFormulas: (строка {rowNumber}): Файл \"{spfFileName}\" не найден.");
                         }
                     }
                     if (name.Substring(0, 1) == "~")
@@ -120,7 +133,13 @@ namespace FamilyDeveloper.Models
                         {
                             isInstanceString = firstPart[1].Trim();
                             isInstance = isInstanceString == "i" || isInstanceString == "inst" || isInstanceString == "istance" || isInstanceString == "1";
-                            group = GetParameterGroupByName(firstPart[2].Trim());
+                            group =
+#if R19 || R20 || R21 || R22
+                                GetParameterGroupByName(firstPart[2].Trim());
+#elif R23 || R24 || R25 || R26
+                                ParameterUtils.GetParameterGroupTypeId(
+                                GetParameterGroupByName(firstPart[2].Trim()));
+#endif
                             if (firstPart.Length == 4)
                             {
                                 setValue = true;
@@ -143,7 +162,13 @@ namespace FamilyDeveloper.Models
                                     type = GetParameterTypeByName(firstPart[1].Trim());
                                 isInstanceString = firstPart[2].Trim();
                                 isInstance = isInstanceString == "i" || isInstanceString == "inst" || isInstanceString == "istance" || isInstanceString == "1";
-                                group = GetParameterGroupByName(firstPart[3].Trim());
+                                group =
+#if R19 || R20 || R21 || R22
+                                    GetParameterGroupByName(firstPart[3].Trim());
+#elif R23 || R24 || R25 || R26
+                                    ParameterUtils.GetParameterGroupTypeId(
+                                    GetParameterGroupByName(firstPart[3].Trim()));
+#endif
                                 if (firstPart.Length == 5)
                                 {
                                     setValue = true;
@@ -157,7 +182,12 @@ namespace FamilyDeveloper.Models
                         FamilyParameter p = doc.FamilyManager.get_Parameter(name);
                         if (p != null)
                         {
-                            type = p.Definition.ParameterType;
+                            type = p.Definition
+#if R19 || R20 || R21 || R22
+                                .ParameterType;
+#elif R23 || R24 || R25 || R26
+                                .GetDataType();
+#endif
                             isInstance = p.IsInstance;
                             if (firstPart.Length == 2)
                             {
@@ -167,17 +197,24 @@ namespace FamilyDeveloper.Models
                                 else if (isInstanceString == "t" || isInstanceString == "type" || isInstanceString == "0")
                                     isInstance = false;
                             }
-                            group = p.Definition.ParameterGroup;
+                            group = p.Definition
+#if R19 || R20 || R21 || R22
+                                .ParameterGroup;
+#elif R23 || R24 || R25 || R26
+                                .GetGroupTypeId();
+#endif
                         }
                         else
                         {
-                            logger.Log($"AddParametersWithFormulas: (строка {rowNumber}): Параметр \"" + name + "\" не найден.");
+                            logger.Log($"AddParametersWithFormulas: (строка {rowNumber}): Параметр \"{name}\" не найден.");
                         }
                     }
-                    if (strSplit.Length == 2)
+                    if (setFormula)
                     {
-                        setFormula = true;
-                        formula = strSplit[1].Trim();
+                        if (strSplit.Length == 2)
+                            formula = strSplit[1].Trim();
+                        if (formula == string.Empty)
+                            formula = null;
                     }
                     if (!parameterFormulas.ContainsKey(name))
                     {
@@ -197,7 +234,7 @@ namespace FamilyDeveloper.Models
                 }
                 else
                 {
-                    logger.Log($"AddParametersWithFormulas: (строка {rowNumber}): Неверное количество параметров: strSplit.Length = " + strSplit.Length + "; firstPart.Length = " + (firstPart != null ? firstPart.Length.ToString() : "null"));
+                    logger.Log($"AddParametersWithFormulas: (строка {rowNumber}): Неверное количество параметров: strSplit.Length = {strSplit.Length}; firstPart.Length = {(firstPart != null ? firstPart.Length.ToString() : "null")}");
                 }
             }
             //rowNumber = 0;
@@ -235,7 +272,6 @@ namespace FamilyDeveloper.Models
                     logger.Log(ex.ToString());
                 }
             }
-            logger.Log(s);
             return (parametersProcessed, totalParameters);
         }
 
@@ -255,7 +291,15 @@ namespace FamilyDeveloper.Models
         /// <param name="isShared">Является ли параметр общим (true) или нет (false)</param>
         /// <param name="spfFileName">Путь к файлу общих параметров, если <paramref name="isShared"/> = <see cref="true"/></param>
         /// <returns>Отчёт о создании</returns>
-        private bool AddParameterWithFormula(Document doc, string name, BuiltInParameterGroup group, ParameterType type, BuiltInCategory category, bool isInstance, bool setValue, string valueString, bool setFormula, string formula, bool isShared, string spfFileName)
+        private bool AddParameterWithFormula(Document doc, string name,
+#if R19 || R20 || R21 || R22
+            BuiltInParameterGroup group,
+            ParameterType type,
+#elif R23 || R24 || R25 || R26
+            ForgeTypeId group,
+            ForgeTypeId type,
+#endif
+            BuiltInCategory category, bool isInstance, bool setValue, string valueString, bool setFormula, string formula, bool isShared, string spfFileName)
         {
             bool success = false;
             FamilyParameter p = null;
@@ -271,15 +315,15 @@ namespace FamilyDeveloper.Models
                         if (def != null)
                         {
                             p = doc.FamilyManager.AddParameter(def, group, isInstance);
-                            logger.Log("AddParameterWithFormula: Создан \"" + p.Definition.Name + "\"\n");
+                            logger.Log($"AddParameterWithFormula: Создан \"{p.Definition.Name}\"");
                             success = true;
                         }
                         else
-                            logger.Log("AddParameterWithFormula: Ошибка получения внешнего определения для \"" + name + "\" from \"" + spfFileName + "\"\n");
+                            logger.Log($"AddParameterWithFormula: Ошибка получения внешнего определения для \"{name}\" from \"{spfFileName}\"");
                     }
                     catch (Exception ex)
                     {
-                        logger.Log("AddParameterWithFormula: Exception (isShared): " + ex.ToString());
+                        logger.Log($"AddParameterWithFormula: Exception (isShared): {ex}");
                         success = false;
                     }
                     finally
@@ -293,39 +337,39 @@ namespace FamilyDeveloper.Models
                         p = doc.FamilyManager.AddParameter(name, group, Category.GetCategory(doc, category), isInstance);
                     else
                         p = doc.FamilyManager.AddParameter(name, group, type, isInstance);
-                    logger.Log("AddParameterWithFormula: Создан \"" + p.Definition.Name + "\"\n");
+                    logger.Log($"AddParameterWithFormula: Создан \"{p.Definition.Name}\"");
                 }
                 if (p != null)
                 {
                     success = true;
                     if (setValue)
                     {
-                        logger.Log("AddParameterWithFormula: Попытка задать значение \"" + valueString + "\"");
+                        logger.Log($"AddParameterWithFormula: Попытка задать значение \"{valueString}\"");
                         if (SetParameterValue(doc, p, valueString))
-                            logger.Log(" - ok\n");
+                            logger.Log(" - ok");
                         else
                         {
-                            logger.Log(" - неудачно\n");
+                            logger.Log(" - неудачно");
                             success = false;
                         }
                     }
                     if (setFormula)
                     {
-                        logger.Log("AddParameterWithFormula: Попытка задать формулу \"" + formula + "\"");
+                        logger.Log($"AddParameterWithFormula: Попытка задать формулу \"{formula}\"");
                         doc.FamilyManager.SetFormula(p, formula);
                         RecalculateParameterFormulas(doc, GetParameterDependentParameters(doc, p.Definition.Name));
-                        logger.Log(" - ok\n");
+                        logger.Log(" - ok");
                     }
                 }
                 else
                 {
-                    logger.Log("AddParameterWithFormula: Не удалось создать \"" + name + "\"\n");
+                    logger.Log($"AddParameterWithFormula: Не удалось создать \"{name}\"");
                     success = false;
                 }
             }
             catch (Exception ex)
             {
-                logger.Log("\nAddParameterWithFormula: Exception: " + ex.ToString() + '\n');
+                logger.Log($"\nAddParameterWithFormula: Exception: {ex}");
                 success = false;
             }
             return success;
@@ -345,7 +389,15 @@ namespace FamilyDeveloper.Models
         /// <param name="setFormula">true, если нужно менять формулу параметра</param>
         /// <param name="formula">Формула для параметра</param>
         /// <returns>Отчёт об изменении</returns>
-        private bool ChangeParameterWithFormula(Document doc, string name, string newName, BuiltInParameterGroup group, ParameterType type, bool isInstance, bool setValue, string valueString, bool setFormula, string formula)
+        private bool ChangeParameterWithFormula(Document doc, string name, string newName,
+#if R19 || R20 || R21 || R22
+            BuiltInParameterGroup group,
+            ParameterType type,
+#elif R23 || R24 || R25 || R26
+            ForgeTypeId group,
+            ForgeTypeId type,
+#endif
+            bool isInstance, bool setValue, string valueString, bool setFormula, string formula)
         {
             bool success = false;
             try
@@ -353,53 +405,74 @@ namespace FamilyDeveloper.Models
                 FamilyParameter p = doc.FamilyManager.get_Parameter(name);
                 if (p == null)
                 {
-                    logger.Log("ChangeParameterWithFormula: Параметр \"" + name + "\" не существует.");
+                    logger.Log($"ChangeParameterWithFormula: Параметр \"{name}\" не существует.");
                     return false;
                 }
-                logger.Log("ChangeParameterWithFormula: Найден \"" + p.Definition.Name + "\"\n");
-                if (p.Definition.ParameterGroup != group)
-                    logger.Log("ChangeParameterWithFormula: Невозможно изменить группу с \"" + p.Definition.ParameterGroup + "\" на \"" + group + "\"\n");
-                if (p.Definition.ParameterType != type)
-                    logger.Log("ChangeParameterWithFormula: невозможно изменить тип с \"" + p.Definition.ParameterType + "\" на \"" + type + "\"\n");
+                logger.Log($"ChangeParameterWithFormula: Найден \"{p.Definition.Name}\"");
+                if (p.Definition
+#if R19 || R20 || R21 || R22
+                    .ParameterGroup
+#elif R23 || R24 || R25 || R26
+                    .GetGroupTypeId()
+#endif
+                    != group)
+#if R19 || R20 || R21 || R22
+                    logger.Log($"ChangeParameterWithFormula: Невозможно изменить группу с \"{p.Definition.ParameterGroup}\" на \"{group}\"");
+#elif R23 || R24 || R25 || R26
+                    logger.Log($"ChangeParameterWithFormula: Невозможно изменить группу с \"{LabelUtils.GetLabelForGroup(p.Definition.GetGroupTypeId())}\" на \"{LabelUtils.GetLabelForGroup(group)}\"");
+#endif
+                if (p.Definition
+#if R19 || R20 || R21 || R22
+                    .ParameterType
+#elif R23 || R24 || R25 || R26
+                    .GetDataType()
+#endif
+                    != type)
+#if R19 || R20 || R21 || R22
+                    logger.Log($"ChangeParameterWithFormula: невозможно изменить тип с \"{p.Definition.ParameterType}\" на \"{type}\"");
+#elif R23 || R24 || R25 || R26
+                    logger.Log($"ChangeParameterWithFormula: невозможно изменить тип с \"{LabelUtils.GetLabelForSpec(p.Definition.GetDataType())}\" на \"{LabelUtils.GetLabelForSpec(type)}\"");
+#endif
                 if (p.IsInstance != isInstance)
                 {
                     if (isInstance)
                     {
-                        logger.Log("ChangeParameterWithFormula: Изменено на параметр экземпляра.\n");
+                        logger.Log("ChangeParameterWithFormula: Изменено на параметр экземпляра.");
                         doc.FamilyManager.MakeInstance(p);
                     }
                     else if (!isInstance)
                     {
-                        logger.Log("ChangeParameterWithFormula: Изменено на параметр типа.\n");
+                        logger.Log("ChangeParameterWithFormula: Изменено на параметр типа.");
                         doc.FamilyManager.MakeType(p);
                     }
                 }
 
                 if (newName != "" && newName != name)
                 {
-                    logger.Log("ChangeParameterWithFormula: Попытка переименовать \"" + name + "\" в \"" + newName + "\"");
+                    logger.Log($"ChangeParameterWithFormula: Попытка переименовать \"{name}\" в \"{newName}\"");
                     doc.FamilyManager.RenameParameter(p, newName);
-                    logger.Log(" - ok\n");
-                }
-                if (setValue)
-                {
-                    if (SetParameterValue(doc, p, valueString))
-                        logger.Log(" - ok\n");
-                    else
-                        logger.Log(" - неудачно\n");
+                    logger.Log(" - ok");
                 }
                 if (setFormula)
                 {
-                    logger.Log("ChangeParameterWithFormula: Попытка задать формулу \"" + formula + "\"");
+                    logger.Log($"ChangeParameterWithFormula: Попытка задать формулу \"{formula}\"");
                     doc.FamilyManager.SetFormula(p, formula);
                     RecalculateParameterFormulas(doc, GetParameterDependentParameters(doc, p.Definition.Name));
-                    logger.Log(" - ok\n");
+                    logger.Log(" - ok");
+                }
+                if (setValue)
+                {
+                    logger.Log($"ChangeParameterWithFormula: Попытка задать значение \"{valueString}\"");
+                    if (SetParameterValue(doc, p, valueString))
+                        logger.Log(" - ok");
+                    else
+                        logger.Log(" - неудачно");
                 }
                 success = true;
             }
             catch (Exception ex)
             {
-                logger.Log("\nChangeParameterWithFormula: Exception: " + ex.ToString() + '\n');
+                logger.Log($"\nChangeParameterWithFormula: Exception: {ex}");
                 success = false;
             }
             return success;
@@ -419,17 +492,37 @@ namespace FamilyDeveloper.Models
                 FamilyParameter p = doc.FamilyManager.get_Parameter(name);
                 if (p == null)
                 {
-                    logger.Log("DeleteParameter: Параметр \"" + name + "\" не существует.");
+                    logger.Log($"DeleteParameter: Параметр \"{name}\" не существует.");
                     return false;
                 }
-                logger.Log("DeleteParameter: Найден \"" + p.Definition.Name + "\"\n");
+                bool isShared = p.IsShared;
+                SharedParameterElement speToDelete = null;
+                if (isShared)
+                {
+                    FilteredElementCollector fec = new FilteredElementCollector(doc).OfClass(typeof(SharedParameterElement));
+                    foreach (SharedParameterElement spe in fec)
+                        if (doc.FamilyManager.get_Parameter(spe.Name).Id == p.Id)
+                        {
+                            speToDelete = spe;
+                            break;
+                        }
+                }
+                logger.Log($"DeleteParameter: Найден \"{p.Definition.Name}\"");
                 doc.FamilyManager.RemoveParameter(p);
-                logger.Log("DeleteParameter: \"" + name + "\" удалён.\n");
+                logger.Log($"DeleteParameter: \"{name}\" удалён.");
+                if (isShared && speToDelete != null && speToDelete.IsValidObject)
+                {
+                    logger.Log($"DeleteParameter: Найдено определение общего параметра с именеи \"{name}\".");
+                    Guid speGuid = speToDelete.GuidValue;
+                    string speName = speToDelete.Name;
+                    doc.Delete(speToDelete.Id);
+                    logger.Log($"DeleteParameter: Удалено определение общего параметра \"{speName}\" c GUID {speGuid}.");
+                }
                 success = true;
             }
             catch (Exception ex)
             {
-                logger.Log("\nDeleteParameter: Exception: " + ex.ToString() + '\n');
+                logger.Log($"\nDeleteParameter: Exception: {ex}");
                 success = false;
             }
             return success;
@@ -543,7 +636,11 @@ namespace FamilyDeveloper.Models
                     double valueDouble;
                     if (double.TryParse(valueString, out valueDouble))
                     {
+#if R19 || R20
+                        doc.FamilyManager.Set(p, UnitUtils.ConvertToInternalUnits(valueDouble, doc.GetUnits().GetFormatOptions(p.Definition.UnitType).DisplayUnits));
+#else
                         doc.FamilyManager.Set(p, UnitUtils.ConvertToInternalUnits(valueDouble, doc.GetUnits().GetFormatOptions(p.Definition.GetSpecTypeId()).GetUnitTypeId()));
+#endif
                         return true;
                     }
                     return false;

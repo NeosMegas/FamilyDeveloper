@@ -1,9 +1,8 @@
 ﻿using Autodesk.Revit.DB;
-using System.Collections.ObjectModel;
 
 namespace FamilyDeveloper.Helpers
 {
-    internal static class ParameterUtils
+    internal static class FD_ParameterUtils
     {
         public static List<BuiltInParameterGroup> GetAllBuiltInGroups(Document doc)
         {

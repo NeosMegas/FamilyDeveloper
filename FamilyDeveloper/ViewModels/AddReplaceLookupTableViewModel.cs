@@ -5,14 +5,9 @@ using FamilyDeveloper.Models;
 using FamilyDeveloper.Views;
 using Microsoft.Win32;
 using SimplePluginLogger;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FamilyDeveloper.ViewModels
 {
@@ -155,7 +150,7 @@ namespace FamilyDeveloper.ViewModels
             foreach (Document doc in uiApp.Application.Documents)
                 if (doc.IsFamilyDocument)
                     nearestFamilyDocument = doc;
-            parameterGroups = new ObservableCollection<BuiltInParameterGroup>(FamilyDeveloper.Helpers.ParameterUtils.GetAllBuiltInGroups(uiApp.ActiveUIDocument.Document));
+            parameterGroups = new ObservableCollection<BuiltInParameterGroup>(FamilyDeveloper.Helpers.FD_ParameterUtils.GetAllBuiltInGroups(uiApp.ActiveUIDocument.Document));
         }
 
         public void AddLookupTable()

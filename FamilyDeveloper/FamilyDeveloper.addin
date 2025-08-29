@@ -2,7 +2,7 @@
 <RevitAddIns>
   <AddIn Type="Application">
     <Name>Application FamilyDeveloper</Name>
-    <Assembly>FamilyDeveloper.dll</Assembly>
+    <Assembly>FamilyDeveloper\FamilyDeveloper.dll</Assembly>
     <FullClassName>FamilyDeveloper.App</FullClassName>
     <ClientId>92a2555b-ded7-40f4-9baf-8d211248343b</ClientId>
     <VendorId>Alexander Valiev</VendorId>

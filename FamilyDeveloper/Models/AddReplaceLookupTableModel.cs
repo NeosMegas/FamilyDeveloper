@@ -1,14 +1,8 @@
 ﻿using Autodesk.Revit.ApplicationServices;
 using Autodesk.Revit.DB;
-using Autodesk.Revit.UI;
 using FamilyDeveloper.Helpers;
 using SimplePluginLogger;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FamilyDeveloper.Models
 {
@@ -270,6 +264,7 @@ namespace FamilyDeveloper.Models
                         }
                     }
                     t.Commit();
+                    return true;
                 }
                 catch (Exception ex)
                 {
@@ -278,7 +273,7 @@ namespace FamilyDeveloper.Models
                     logger.Log($"AddLookupTable exception: {ex}");
                 }
             }
-            return true;
+            return false;
         }
     }
 }
